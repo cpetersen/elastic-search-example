@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  elasticsearch:
+    image: elasticsearch:8.14.0
+    ports:
+      - 9201:9200
+    volumes:
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      ES_JAVA_OPTS: -Xmx2g -Xms2g
+      discovery.type: single-node # We only need to run a single node locally
+      xpack.security.enabled: false
