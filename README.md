@@ -101,3 +101,47 @@ From the console:
   puts "-------------"
 end; nil
 ```
+
+## Results
+
+```ruby
+Query: "quick brown fox"
+Description: Phrase match
+0 Title: The Quick Brown Fox
+-------------
+Query: quick AND fox
+Description: Boolean (AND) operator
+0 Title: The Quick Brown Fox
+1 Title: Foxes and Their Habitats
+2 Title: Foxes: A Detailed Overview
+3 Title: Guide to Wild Animals
+4 Title: Wildlife Safari
+-------------
+Query: quick -brown
+Description: Negation
+0 Title: Foxes and Their Habitats
+1 Title: Understanding Search Engines
+2 Title: Wildlife Safari
+3 Title: Why Search Matters
+-------------
+Query: title:quick AND body:fox
+Description: Field-specific search
+-------------
+Query: qui*
+Description: Wildcard
+0 Title: The Quick Brown Fox
+1 Title: Guide to Wild Animals
+2 Title: Foxes and Their Habitats
+3 Title: Wildlife Safari
+4 Title: Understanding Search Engines
+5 Title: Why Search Matters
+6 Title: Foxes: A Detailed Overview
+-------------
+Query: "quick fox"~5
+Description: Proximity search
+0 Title: Wildlife Safari
+1 Title: Foxes and Their Habitats
+2 Title: The Quick Brown Fox
+3 Title: Guide to Wild Animals
+-------------
+```
