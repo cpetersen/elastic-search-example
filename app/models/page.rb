@@ -1,3 +1,3 @@
 class Page < ApplicationRecord
-  searchkick searchable: [ :title, :body ]
+  searchkick word_start: [ :title, :body ]
 end

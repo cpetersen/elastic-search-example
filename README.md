@@ -76,6 +76,7 @@ Page.reindex
 From the console:
 
 ```ruby
+ActiveRecord::Base.logger.level = 1
 {
   '"quick brown fox"' => "Phrase match",
   'quick AND fox' => "Boolean (AND) operator",
