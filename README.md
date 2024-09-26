@@ -71,7 +71,9 @@ Page.create!(
 Page.reindex
 ```
 
-## Testing Search
+## `query_string`
+
+### Testing Search
 
 From the console:
 
@@ -103,7 +105,7 @@ ActiveRecord::Base.logger.level = 1
 end; nil
 ```
 
-## Results
+### Results
 
 ```ruby
 Query: "quick brown fox"
@@ -144,5 +146,104 @@ Description: Proximity search
 1 Title: Foxes and Their Habitats
 2 Title: The Quick Brown Fox
 3 Title: Guide to Wild Animals
+-------------
+```
+
+## `simple_query_string`
+
+### Testing Search
+
+THESE RESULTS DON'T LOOK RIGHT
+
+```ruby
+ActiveRecord::Base.logger.level = 1
+{
+  '"quick brown fox"' => "Phrase match",
+  'quick + fox' => "Boolean (AND) operator",
+  'quick -brown' => "Negation",
+  'title:quick AND body:fox' => "Field-specific search",
+  'qui*' => "Wildcard",
+  '"quick fox"~5' => "Proximity search"
+}.each do |query, description|
+  puts "Query: #{query}"
+  puts "Description: #{description}"
+  Page.search(
+    body: {
+      query: {
+        simple_query_string: {
+          query: query,
+          fields: ["*"]
+        }
+      }
+    }
+  ).each_with_index do |page, index|
+    puts "#{index} Title: #{page.title}"
+  end; nil
+  puts "-------------"
+end; nil
+```
+
+### Results
+
+```ruby
+Query: "quick brown fox"
+Description: Phrase match
+0 Title: The Quick Brown Fox
+-------------
+Query: quick + fox
+Description: Boolean (AND) operator
+0 Title: The Quick Brown Fox
+1 Title: Foxes and Their Habitats
+2 Title: Foxes: A Detailed Overview
+3 Title: Search Query Best Practices
+4 Title: Advanced Lucene Query Syntax
+5 Title: Guide to Wild Animals
+6 Title: Wildlife Safari
+7 Title: Why Search Matters
+-------------
+Query: quick -brown
+Description: Negation
+0 Title: The Quick Brown Fox
+1 Title: Search Query Best Practices
+2 Title: Advanced Lucene Query Syntax
+3 Title: Foxes and Their Habitats
+4 Title: Understanding Search Engines
+5 Title: Wildlife Safari
+6 Title: Why Search Matters
+7 Title: Guide to Wild Animals
+8 Title: Foxes: A Detailed Overview
+-------------
+Query: title:quick AND body:fox
+Description: Field-specific search
+0 Title: Foxes and Their Habitats
+1 Title: The Quick Brown Fox
+2 Title: Guide to Wild Animals
+3 Title: Search Query Best Practices
+4 Title: Advanced Lucene Query Syntax
+5 Title: Foxes: A Detailed Overview
+6 Title: Introduction to Elasticsearch
+7 Title: Wildlife Safari
+8 Title: Understanding Search Engines
+9 Title: Why Search Matters
+-------------
+Query: qui*
+Description: Wildcard
+0 Title: The Quick Brown Fox
+1 Title: Guide to Wild Animals
+2 Title: Foxes and Their Habitats
+3 Title: Wildlife Safari
+4 Title: Understanding Search Engines
+5 Title: Why Search Matters
+6 Title: Foxes: A Detailed Overview
+-------------
+Query: "quick fox"~5
+Description: Proximity search
+0 Title: The Quick Brown Fox
+1 Title: Advanced Lucene Query Syntax
+2 Title: Wildlife Safari
+3 Title: Foxes and Their Habitats
+4 Title: Guide to Wild Animals
+5 Title: Why Search Matters
+6 Title: Foxes: A Detailed Overview
 -------------
 ```
